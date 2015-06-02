@@ -1,1 +1,238 @@
-My Page
+
+<!DOCTYPE html>
+<head>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<script src="js/jquery-2.1.4.min.js"></script>
+	 <script src="js/bootstrap.min.js"></script>
+	 <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+	 <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+	<title>Algoritma Floyd-Warshall</title>
+</head>
+
+<body data-spy="scroll" data-target=".navbar" data-offset="12" class="test">
+	<div class="jumbotron">
+	
+	<nav class="navbar navbar-default navbar-fixed-top">
+	  <div class="container-fluid">
+		<div class="navbar-header">
+		  <a class="navbar-brand" href="#">Algoritma Floyd-Warshall</a>
+		</div>
+		<div>
+		  <ul class="nav navbar-nav navbar-right">
+			<li><a href="#Algoritma">Algoritma</a></li>
+			<li><a href="#AplikasiLain">Aplikasi Lain</a></li>
+			<li><a href="#Simulasi">Simulasi</a></li>
+		  </ul>
+		</div>
+	  </div>
+	</nav>
+	
+		<div class="Title">
+			<div class="container">
+				<h1>Algoritma Floyd-Warshall</h1><br/>
+				<h3>Vicko Novianto / 13513092</h3>
+			</div>
+		</div>
+
+
+		<div class="Algoritma" id="Algoritma">
+			<h2>Algoritma Floyd-Warshall</h2><br/><br/>
+			<p>Algoritma Floyd-Warshall ditemukan oleh Robert W. Floyd dan Stephen Warshall. Algoritma ini biasanya digunakan untuk menyelesaikan masalah All-Pairs Shortest Paths, yaitu mencari jalan terpendek di antara semua pasang simpul dalam sebuah graf. Algoritma ini menggunakan metode <i>Dynamic Programming</i> (Pemrograman Dinamis). Secara garis besar, algoritma ini bekerja sebagai berikut : 
+			<br/><br/>
+			<pre>
+					  int graph[128][128], n; // sebuah graf berbobot dan ukurannya
+					  void floydWarshall() {
+						  for( int k = 0; k < n; k++ )
+							  for( int i = 0; i < n; i++ )
+								  for( int j = 0; j < n; j++ )
+									  graph[i][j] = min( graph[i][j], graph[i][k] + graph[k][j] );
+					  }
+			
+					  int main {
+						  // inisialisasi matriks ketetanggaan dan n 
+						  // graph[i][i] harus bernilai 0 untuk semua i
+						  // graph[i][j] harus bernilai "tidak terbatas" jika sisi (i, j) tidak ada
+						  // sebaliknya, graph[i][j] adalah bobot dari sisi (i, j) 
+						  floydWarshall();
+						  // sekarang graph[i][j] adalah panjang jalan terpendek dari i ke j 
+					  }
+			</pre>
+			<p> Algoritma ini memiliki kompleksitas waktu $O(V^3)$ dan kompleksitas ruang $O(V^2)$ dengan $V$ adalah jumlah simpul dalam graf. 
+			Keunggulan dari algoritma ini adalah kode implementasi yang simpel, hanya empat baris saja. Algoritma ini hanya bekerja pada graf yang tidak memiliki siklus yang total bobotnya negatif. Algoritma ini juga harus menggunakan matriks ketetanggaan agar bobot sisi ($i$, $j$) bisa diakses dalam $O(1)$ .<br/><br/></p>
+			
+			<p> Ide yang mendasari algoritma ini adalah penggunaan simpul perantara untuk membentuk jalan terpendek. Simpul perantara dari suatu jalan dari $i$ ke $j$ adalah simpul-simpul selain $i$ dan $j$. Misalkan simpul-simpul diberi nomor dari $0$ sampai $V - 1$ . Simpul perantara dibatasi hanya boleh bernomor dari $0$ sampai $k$. Jika suatu jalan dari $i$ ke $j$ memiliki $k = -1$ maka tidak ada simpul perantara dari $i$ ke $j$.
+			Jika simpul bernomor $k$ bukan simpul perantara dari suatu jalan, maka simpul-simpul perantara pasti bernomor dari $0$ sampai $k - 1$ . 
+			Maka jalan terpendek dari simpul $i$ ke $j$ dengan simpul perantara yang nomornya berada di rentang $0$ sampai $k - 1$ akan sama dengan jalan terpendek dari simpul $i$ ke $j$ dengan simpul perantara yang nomornya berada di rentang $0$ sampai $k$. 
+			Namun jika simpul bernomor $k$ merupakan simpul perantara dari suatu jalan, maka bobot terpendek dari jalan tersebut adalah penjumlahan dari panjang jalan terpendek dari $i$ ke $k$ dengan panjang jalan terpendek dari $k$ ke $j$. Jalan terpendek dari $i$ ke $k$ dan jalan terpendek dari $k$ ke $j$ memiliki simpul-simpul perantara yang berada di rentang $0$ sampai $k - 1$.<br/><br/>
+			
+			<p> Untuk mencetak jalan terpendek antar simpul, dibutuhkan modifikasi pada kode sebelumnya. Dibutuhkan matriks tambahan yang berisi simpul yang merupakan simpul terakhir yang dilewati sebelum simpul tujuan (<i>predecessor matrix</i>). Berikut adalah kode yang mencetak jalan terpendek : </p>
+			<br/><br/>
+			
+			<pre>
+					  // di dalam int main()
+					  // misalkan p adalah sebuah matriks 2D, p[i][j] adalah simpul terakhir sebelum j 
+					  // dalam sebuah jalan terpendek dari i ke j, misalkan i -> ... -> p[i][j] -> j
+					  for (int i = 0; i < V; i++)
+						  for (int j = 0; j < V; j++)
+							  p[i][j] = i; // inisialisasi matriks p 
+					  for (int k = 0; k < V; k++)
+						  for (int i = 0; i < V; i++)
+							  for (int j = 0; j < V; j++) 
+								  if (AdjMat[i][k] + AdjMat[k][j] < AdjMat[i][j]) {
+									  AdjMat[i][j] = AdjMat[i][k] + AdjMat[k][j];
+									  p[i][j] = p[k][j]; 
+								  }
+					  //-------------------------------------------------------------------------
+					  // saat ingin mencetak jalan terpendek ke layar, panggillah prosedur ini:
+					  void printPath(int i, int j) {
+						  if (i != j) printPath(i, p[i][j]);
+						  printf(" %d", j);
+					  }
+		</pre>
+		</div>
+
+		
+		
+		<div class="AplikasiLain" id="AplikasiLain">
+			<br/><br/><h2>Aplikasi Lain Algoritma Floyd-Warshall</h2>
+			
+			<br/><br/>
+			<h3> <i>Single-Source Shortest Paths</i> </h3><br/><br/>
+			
+			<p> Algoritma Floyd-Warshall bisa digunakan untuk memecahkan masalah <i>Single-Source Shortest Paths</i>, yaitu mencari jalan terpendek dari suatu simpul $i$ ke semua simpul lainnya dalam suatu graf. Jika jumlah simpul tidak terlalu besar ($\leqslant 400$), maka lebih cepat untuk mengimplementasi Algoritma Floyd-Warshall daripada Algoritma Djikstra yang lebih panjang.  </p><br/><br/>
+			
+			<h3> <i>Transitive Closure</i> </h3><br/><br/>
+			<p>	Algoritma Floyd-Warshall juga bisa dimodifikasi untuk menyelesaikan masalah <i>Transitive Closure</i>, yaitu menentukan apakah simpul $i$ terhubung secara langsung maupun tidak langsung dengan simpul $j$ dalam suatu graf. Pada awalnya matriks ketetanggaan AdjMat[i][j] bernilai 1(<code>true</code>) jika simpul $i$ terhubung langsung dengan simpul $j$ dan 0(<code>false</code>) jika tidak. Berikut adalah algoritma untuk <i>Transitive Closure</i>: </p><br/>
+			<pre>
+					  for (int k = 0; k < V; k++)
+						  for (int i = 0; i < V; i++)
+							  for (int j = 0; j < V; j++)
+								  AdjMat[i][j] |= (AdjMat[i][k] & AdjMat[k][j]);
+			</pre><br/><br/>
+			
+			<h3> <i>Minimax and Maximin Path Problem</i> </h3><br/><br/>
+			<p> <i>Minimax Path Problem</i> adalah masalah untuk mencari sebuah jalan dari simpul $i$ ke $j$ yang memiliki bobot maksimal dari sisi-sisi yang dilewati jalan tersebut dan bobot maksimal tersebut minimal dibandingkan bobot maksimal yang dimiliki semua jalan yang mungkin dari simpul $i$ ke $j$.
+			Sementara <i>Maximin Path Problem</i> adalah masalah untuk mencari sebuah jalan dari simpul $i$ ke $j$ yang memiliki bobot minimal dari sisi-sisi yang dilewati jalan tersebut dan bobot minimal tersebut maksimal dibandingkan bobot minimal yang dimiliki semua jalan yang mungkin dari simpul $i$ ke $j$.
+			Algoritma Floyd-Warshall juga bisa menyelesaikan masalah ini jika simpulnya sedikit($V \leqslant 400$). Untuk menyelesaikan masalah ini, pertama-tama inisialisasi AdjMat[i][j] dengan bobot sisi (i, j) jika i dan j terhubung langsung. Jika tidak terhubung langsung, AdjMat[i][j] diisi dengan "tidak terbatas"(INF). Lalu cobalah semua simpul perantara $k$. Berikut adalah algoritma Floyd-Warshall untuk <i>Minimax Path Problem</i>:</p><br/>
+			
+			<pre>
+					  for (int k = 0; k < V; k++)
+						  for (int i = 0; i < V; i++)
+							  for (int j = 0; j < V; j++)
+								  AdjMat[i][j] = min(AdjMat[i][j], max(AdjMat[i][k], AdjMat[k][j]));				
+			</pre><br/><br/>
+			
+			<h3> Mencari Siklus Negatif / Termurah (Non-Negatif) </h3><br/><br/>
+			<p> Algoritma Floyd-Warshall bisa mendeteksi bahwa suatu graf memiliki sebuah siklus, siklus negatif, ataupun siklus termurah (non-negatif). Pertama-tama inisialisasi diagonal utama dari AdjMat (diagonal utama = AdjMat[i][i]) dengan nilai yang sangat besar misalnya INF(tidak terbatas / $10^9$ jika AdjMat berisi int 32bit). Lalu jalankan Algoritma Floyd-Warshall. Setelah itu cek nilai dari AdjMat[i][i] yang menggambarkan total bobot setelah melalui satu siklus yaitu dari simpul i ke simpul i lagi. Jika AdjMat[i][i] sudah tidak bernilai INF maka graf masukan memiliki siklus. Nilai AdjMat[i][i] yang terkecil dan tidak negatif adalah bobot dari siklus termurah. Jika ada AdjMat[i][i] yang negatif maka graf masukan memiliki siklus negatif. </p><br/><br/>
+			
+			<h3> Mencari Diameter dari Suatu Graf </h3><br/><br/>
+			<p> Diameter dari suatu graf adalah panjang jalan terpendek yang maksimum (<i>maximum shortest path distance</i>) dari pasangan simpul dari graf tersebut. 
+			Pertama-tama jalankan algoritma Floyd-Warshall. Setelah itu carilah panjang jalan terpendek yang maksimum dengan cara menelusuri AdjMat. Penelusuran AdjMat membutuhkan waktu $O(V^2)$. </p><br/><br/>
+			
+			<h3> Mencari <i>Strongly Connected Components</i> dari Suatu Graf </h3><br/><br/>
+			<p> <i>Strongly Connected Components</i> adalah upagraf yang setiap simpulnya bisa dijangkau dari setiap simpul lainnya. Upagraf tersebut memiliki simpul dan sisi yang maksimal, sehingga jika ditambah simpul / sisi maka upagraf tersebut tidak lagi terhubung kuat. Jika ukuran grafnya kecil, maka Algoritma Floyd-Warshall untuk <i>Transitive Closure</i> bisa digunakan. Setelah menjalankan algoritma Floyd-Warshall untuk <i>Transitive Closure</i>, untuk mencari semua anggota SCC(<i>Strongly Connected Components</i>) yang mengandung simpul $i$, periksalah semua simpul lainnya (simpul $j$). 
+			Jika AdjMat[i][j] dan AdjMat[j][i] bernilai <code>true</code> maka simpul $i$ dan $j$ berada dalam satu SCC.	</p><br/><br/>
+		</div>
+
+		<div class="Simulasi" id="Simulasi" >
+			<h2>Simulasi</h2><br/>
+			<div class="embed-responsive embed-responsive-4by3">
+				<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/Qdt5WJVkPbY"></iframe>
+			</div>
+		</div>
+		
+		<div class="Referensi" id="Referensi">
+			<h2>Referensi</h2><br/>
+			<center>
+
+			<p>Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, and Cliff Stein. Introduction
+to Algorithm. MIT Press, 3rd edition, 2009.</p><br/><br/>
+			<p>Steven Halim, Felix Halim. Competitive Programming 3. 2010.</p><br/><br/>
+
+			</center>
+		</div>
+	</div></body>
+
+<style type="text/css">
+.Title .container{
+	height : 750px;
+	width : 1375px;
+}
+
+.Title h1{
+	text-align: center;
+	font-size: 70px;
+	color: green;
+	padding-top: 250px;
+}
+
+.Title h3{
+	text-align: center;
+	color: green;
+}
+.container li{
+	display: inline;
+}
+
+.container a{
+	color: black;
+	padding: 10px;
+}
+
+.Algoritma h2{
+	text-align: center;
+}
+
+.Algoritma p{
+	padding-left: 300px;
+	padding-right: 300px;
+	text-align: justify;
+}
+
+
+.Algoritma a{
+	padding-left: 650px;
+	color: black;
+}
+
+.AplikasiLain h2, h3{
+	text-align: center;
+}
+
+.AplikasiLain p{
+	padding-left: 300px;
+	padding-right: 300px;
+	text-align: justify;
+}
+
+.AplikasiLain a{
+	padding-left: 650px;
+	color: black;
+}
+
+.Simulasi {
+	text-align: center;
+	padding-left: 250px;
+	padding-right: 250px;
+}
+
+.Referensi{
+	height: 500px;
+}
+
+.Referensi h2{
+	text-align: center;
+	padding-top: 100px;
+	color: green;
+}
+
+.jumbotron {
+		background-image: url(img/b.jpg);
+}
+
+</style>
+</html>
